@@ -201,9 +201,35 @@ function* generateEdgesVertical(triGrid) {
   }
 }
 
-function triGridToDumbSegments(triGrid) {
-  const segments = [];
+function combineSegments(segments) {
+  const result = [];
 
+  // Segment we are building but have not yet "emittted"
+  let openSeg;
+
+  function emitAnySeg() {
+    if (openSeg) {
+      result.push(openSeg);
+      openSeg = undefined;
+    }
+  }
+
+  for (const seg of segments) {
+    if (!openSeg || (seg[0].x !== openSeg[1].x) || (seg[0].y !== openSeg[1].y)) {
+      emitAnySeg();
+      openSeg = [{x: seg[0].x, y: seg[0].y}, {x: seg[1].x, y: seg[1].y}]; // clone seg
+    } else {
+      openSeg[1].x = seg[1].x;
+      openSeg[1].y = seg[1].y;
+    }
+  }
+  emitAnySeg();
+
+  return result;
+}
+
+function triGridToDumbSegments(triGrid) {
+  const segmentsNESW = [];
   for (const {tAbove, tBelow, leftV, rightV} of generateEdgesNESW(triGrid)) {
     let draw = false;
     const tAboveFacing = tAbove ? tAbove.facing : FACING_NONE;
@@ -220,10 +246,29 @@ function triGridToDumbSegments(triGrid) {
     }
 
     if (draw) {
-      segments.push([leftV, rightV]);
+      segmentsNESW.push([leftV, rightV]);
     }
   }
+  for (const seg of segmentsNESW) {
+    if ((seg[0].x + seg[0].y) & 1) {
+      [seg[0], seg[1]] = [seg[1], seg[0]];
+    }
+  }
+  segmentsNESW.sort((a, b) => {
+    const aPri = a[0].x+a[0].y;
+    const aSec = a[0].y;
 
+    const bPri = b[0].x+b[0].y;
+    const bSec = b[0].y;
+
+    if (aPri === bPri) {
+      return ((aPri & 1) ? 1 : -1)*(aSec - bSec);
+    } else {
+      return aPri - bPri;
+    }
+  });
+
+  const segmentsNWSE = [];
   for (const {tAbove, tBelow, leftV, rightV} of generateEdgesNWSE(triGrid)) {
     let draw = false;
     const tAboveFacing = tAbove ? tAbove.facing : FACING_NONE;
@@ -240,10 +285,29 @@ function triGridToDumbSegments(triGrid) {
     }
 
     if (draw) {
-      segments.push([leftV, rightV]);
+      segmentsNWSE.push([leftV, rightV]);
     }
   }
+  for (const seg of segmentsNWSE) {
+    if ((seg[0].y - seg[0].x) & 1) {
+      [seg[0], seg[1]] = [seg[1], seg[0]];
+    }
+  }
+  segmentsNWSE.sort((a, b) => {
+    const aPri = a[0].y-a[0].x;
+    const aSec = a[0].y;
 
+    const bPri = b[0].y-b[0].x;
+    const bSec = b[0].y;
+
+    if (aPri === bPri) {
+      return ((aPri & 1) ? -1 : 1)*(aSec - bSec);
+    } else {
+      return aPri - bPri;
+    }
+  });
+
+  const segmentsVertical = [];
   for (const {tLeft, tRight, topV, botV} of generateEdgesVertical(triGrid)) {
     let draw = false;
     const tLeftFacing = tLeft ? tLeft.facing : FACING_NONE;
@@ -260,11 +324,29 @@ function triGridToDumbSegments(triGrid) {
     }
 
     if (draw) {
-      segments.push([topV, botV]);
+      segmentsVertical.push([topV, botV]);
     }
   }
+  for (const seg of segmentsVertical) {
+    if (seg[0].x & 1) {
+      [seg[0], seg[1]] = [seg[1], seg[0]];
+    }
+  }
+  segmentsVertical.sort((a, b) => {
+    const aPri = a[0].x;
+    const aSec = a[0].y;
 
-  return segments;
+    const bPri = b[0].x;
+    const bSec = b[0].y;
+
+    if (aPri === bPri) {
+      return ((aPri & 1) ? -1 : 1)*(aSec - bSec);
+    } else {
+      return aPri - bPri;
+    }
+  });
+
+  return [].concat(combineSegments(segmentsNESW), combineSegments(segmentsNWSE), combineSegments(segmentsVertical));
 }
 
 function segmentsToSVG(triGrid, segments, padFrac) {
@@ -287,7 +369,7 @@ function segmentsToSVG(triGrid, segments, padFrac) {
   const viewBoxWidth = unframedWidth + 2*frameDim;
   const viewBoxHeight = unframedHeight + 2*frameDim;
 
-  return `<svg viewBox="${viewBoxOrigX} ${viewBoxOrigY} ${viewBoxWidth} ${viewBoxHeight}" xmlns="http://www.w3.org/2000/svg"><path transform="scale(${scaleX} ${scaleY})" stroke="black" stroke-width="0.3" d="${pathStr}" /></svg>`;
+  return `<svg viewBox="${viewBoxOrigX} ${viewBoxOrigY} ${viewBoxWidth} ${viewBoxHeight}" xmlns="http://www.w3.org/2000/svg"><path transform="scale(${scaleX} ${scaleY})" stroke="black" stroke-width="0.3" stroke-linecap="round" d="${pathStr}" /></svg>`;
 }
 
 const scene = createScene();
