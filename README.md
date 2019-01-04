@@ -5,6 +5,6 @@ The concept for this is blatantly stolen from the amazing pen plotter works of F
 
 <p align="center">
   <img width="256" src="docs/sample1.svg">
-  <img width="256" src="docs/sample2.svg">
   <img width="256" src="docs/sample3.svg">
+  <img width="256" src="docs/sample2.svg">
 </p>
