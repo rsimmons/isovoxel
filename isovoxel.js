@@ -340,13 +340,20 @@ function triGridToDumbSegments(triGrid) {
   return [].concat(combineSegments(segmentsNESW), combineSegments(segmentsNWSE), combineSegments(segmentsVertical));
 }
 
-function segmentsToSVG(triGrid, segments, padFrac) {
+function segmentsToSVG(triGrid, segments, padFrac, singlePath) {
   const pathPieces = [];
-  for (const seg of segments) {
-    pathPieces.push(`M ${seg[0].x} ${seg[0].y} L ${seg[1].x} ${seg[1].y}`);
+  if (singlePath) {
+    pathPieces.push('<path d="');
+    for (const seg of segments) {
+      pathPieces.push(`M ${seg[0].x} ${seg[0].y} L ${seg[1].x} ${seg[1].y} `);
+    }
+    pathPieces.push('" />');
+  } else {
+    for (const seg of segments) {
+      pathPieces.push(`<path d="M ${seg[0].x} ${seg[0].y} L ${seg[1].x} ${seg[1].y}" />`);
+    }
   }
-
-  const pathStr = pathPieces.join(' ');
+  const pathStr = pathPieces.join('');
 
   // Makes all triangles equilateral with side length 1
   const scaleX = 0.5*Math.sqrt(3);
@@ -360,12 +367,12 @@ function segmentsToSVG(triGrid, segments, padFrac) {
   const viewBoxWidth = unframedWidth + 2*frameDim;
   const viewBoxHeight = unframedHeight + 2*frameDim;
 
-  return `<svg viewBox="${viewBoxOrigX} ${viewBoxOrigY} ${viewBoxWidth} ${viewBoxHeight}" xmlns="http://www.w3.org/2000/svg"><path transform="scale(${scaleX} ${scaleY})" stroke="black" stroke-width="0.3" stroke-linecap="round" d="${pathStr}" /></svg>`;
+  return `<svg viewBox="${viewBoxOrigX} ${viewBoxOrigY} ${viewBoxWidth} ${viewBoxHeight}" xmlns="http://www.w3.org/2000/svg"><g transform="scale(${scaleX} ${scaleY})" stroke="black" stroke-width="0.3" stroke-linecap="round">${pathStr}</g></svg>`;
 }
 
 const scene = createScene();
 const {triGrid, offset} = createTriGridForScene(scene);
 renderSceneToTriGrid(scene, triGrid, offset);
 const segments = triGridToDumbSegments(triGrid);
-const svg = segmentsToSVG(triGrid, segments, 0.1);
+const svg = segmentsToSVG(triGrid, segments, 0.1, false);
 fs.writeFileSync('out.svg', svg);
