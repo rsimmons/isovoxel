@@ -61,9 +61,9 @@ function createScene() {
 
   scene.voxel = new Uint8Array(scene.size.x*scene.size.y*scene.size.z);
 
-  fillBox(scene, vec3Create(0, 0, 0), vec3Create(1000, 1000, 1000), 1);
+  // fillBox(scene, vec3Create(0, 0, 0), vec3Create(1000, 1000, 1000), 1);
   for (let i = 0; i < 200; i++) {
-    fillBox(scene, randVoxelVec(scene), randVoxelVec(scene), (Math.random() < 1) ? 0 : 1);
+    fillBox(scene, randVoxelVec(scene), randVoxelVec(scene), (Math.random() < 0.8) ? 0 : 1);
   }
 
   return scene;
@@ -241,7 +241,7 @@ function triGridToDumbSegments(triGrid) {
     }
   }
   for (const seg of segmentsNESW) {
-    if ((seg[0].x + seg[0].y) & 1) {
+    if ((seg[0].x + seg[0].y) & 2) {
       [seg[0], seg[1]] = [seg[1], seg[0]];
     }
   }
@@ -253,7 +253,7 @@ function triGridToDumbSegments(triGrid) {
     const bSec = b[0].y;
 
     if (aPri === bPri) {
-      return ((aPri & 1) ? 1 : -1)*(aSec - bSec);
+      return ((aPri & 2) ? 1 : -1)*(aSec - bSec);
     } else {
       return aPri - bPri;
     }
@@ -280,7 +280,7 @@ function triGridToDumbSegments(triGrid) {
     }
   }
   for (const seg of segmentsNWSE) {
-    if ((seg[0].y - seg[0].x) & 1) {
+    if ((seg[0].y - seg[0].x) & 2) {
       [seg[0], seg[1]] = [seg[1], seg[0]];
     }
   }
@@ -292,7 +292,7 @@ function triGridToDumbSegments(triGrid) {
     const bSec = b[0].y;
 
     if (aPri === bPri) {
-      return ((aPri & 1) ? -1 : 1)*(aSec - bSec);
+      return ((aPri & 2) ? -1 : 1)*(aSec - bSec);
     } else {
       return aPri - bPri;
     }
