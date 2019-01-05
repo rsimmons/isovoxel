@@ -150,15 +150,6 @@ function renderSceneToTriGrid(scene, triGrid, offset) {
   }
 }
 
-function printTriGrid(triGrid) {
-  i = 0;
-  for (let y = 0; y < triGrid.size.y; y++) {
-    const line = triGrid.arr.slice(i, i+triGrid.size.x).map(p => ((p.depth === BACKGROUND_DEPTH) ? 'X' : p.depth)).join(' ');
-    console.log(line);
-    i += triGrid.size.x;
-  }
-}
-
 function* generateEdgesNESW(triGrid) {
   // Conceptually we iterate over the triangles below the target edges
   for (let y = 0; y <= triGrid.size.y; y++) { // intentionally go one row past
@@ -375,7 +366,6 @@ function segmentsToSVG(triGrid, segments, padFrac) {
 const scene = createScene();
 const {triGrid, offset} = createTriGridForScene(scene);
 renderSceneToTriGrid(scene, triGrid, offset);
-// printTriGrid(triGrid);
 const segments = triGridToDumbSegments(triGrid);
 const svg = segmentsToSVG(triGrid, segments, 0.1);
 fs.writeFileSync('out.svg', svg);
