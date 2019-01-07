@@ -10,5 +10,5 @@ for (let i = 0; i < 1000; i++) {
   fillBox(scene, randVoxelVec(scene), randVoxelVec(scene), (Math.random() < 0.85) ? 0 : 1);
 }
 
-const svg = renderSceneToSVG(scene, 0.1, true);
+const svg = renderSceneToSVG(scene, {padFrac: 0.1});
 fs.writeFileSync('out.svg', svg);
