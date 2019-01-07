@@ -55,15 +55,15 @@ function randVoxelVec(scene) {
 
 function createScene() {
   const scene = {
-    size: vec3Create(32, 32, 64),
+    size: vec3Create(64, 64, 64),
     voxel: null,
   };
 
   scene.voxel = new Uint8Array(scene.size.x*scene.size.y*scene.size.z);
 
   // fillBox(scene, vec3Create(0, 0, 0), vec3Create(1000, 1000, 1000), 1);
-  for (let i = 0; i < 200; i++) {
-    fillBox(scene, randVoxelVec(scene), randVoxelVec(scene), (Math.random() < 0.8) ? 0 : 1);
+  for (let i = 0; i < 1000; i++) {
+    fillBox(scene, randVoxelVec(scene), randVoxelVec(scene), (Math.random() < 0.85) ? 0 : 1);
   }
 
   return scene;
