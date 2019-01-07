@@ -341,23 +341,25 @@ function triGridToDumbSegments(triGrid) {
 }
 
 function segmentsToSVG(triGrid, segments, padFrac, singlePath) {
+  // Makes all triangles equilateral with side length 1
+  const scaleX = 0.5*Math.sqrt(3);
+  const scaleY = 0.5;
+
+  const scaledSegments = segments.map(([a, b]) => ([{x: scaleX*a.x, y: scaleY*a.y}, {x: scaleX*b.x, y: scaleY*b.y}]));
+
   const pathPieces = [];
   if (singlePath) {
     pathPieces.push('<path d="');
-    for (const seg of segments) {
+    for (const seg of scaledSegments) {
       pathPieces.push(`M ${seg[0].x} ${seg[0].y} L ${seg[1].x} ${seg[1].y} `);
     }
     pathPieces.push('" />');
   } else {
-    for (const seg of segments) {
+    for (const seg of scaledSegments) {
       pathPieces.push(`<path d="M ${seg[0].x} ${seg[0].y} L ${seg[1].x} ${seg[1].y}" />`);
     }
   }
   const pathStr = pathPieces.join('');
-
-  // Makes all triangles equilateral with side length 1
-  const scaleX = 0.5*Math.sqrt(3);
-  const scaleY = 0.5;
 
   const unframedWidth = scaleX*triGrid.size.x;
   const unframedHeight = scaleY*triGrid.size.y;
@@ -367,7 +369,7 @@ function segmentsToSVG(triGrid, segments, padFrac, singlePath) {
   const viewBoxWidth = unframedWidth + 2*frameDim;
   const viewBoxHeight = unframedHeight + 2*frameDim;
 
-  return `<svg viewBox="${viewBoxOrigX} ${viewBoxOrigY} ${viewBoxWidth} ${viewBoxHeight}" xmlns="http://www.w3.org/2000/svg"><g transform="scale(${scaleX} ${scaleY})" stroke="black" stroke-width="0.3" stroke-linecap="round">${pathStr}</g></svg>`;
+  return `<svg viewBox="${viewBoxOrigX} ${viewBoxOrigY} ${viewBoxWidth} ${viewBoxHeight}" xmlns="http://www.w3.org/2000/svg"><g stroke="black" stroke-width="0.4" stroke-linecap="round">${pathStr}</g></svg>`;
 }
 
 const scene = createScene();
