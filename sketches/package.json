@@ -1,0 +1,8 @@
+{
+  "name": "isovoxel-sketches",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "isovoxel-core": "0.1.0"
+  }
+}
