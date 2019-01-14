@@ -2,6 +2,7 @@
   "private": true,
   "workspaces": [
     "core",
-    "sketches"
+    "sketches",
+    "thick-cut"
   ]
 }
