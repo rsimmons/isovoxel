@@ -1,6 +1,7 @@
 const fs = require('fs');
 
 const {cutPathsToPonokoSVG} = require('isovoxel-ponoko-export');
+const {orderPathsForMinimumTravel} = require('./opt');
 
 const EXPAND_RADIUS = 0.22;
 
@@ -213,9 +214,13 @@ function cullPaths(paths) {
   }
 
   // We only care about rootPaths[0] and first level inside it
+  const innerPaths = rootPaths[0].children.map(c => c.path);
+  const optimizedInnerPaths = orderPathsForMinimumTravel(innerPaths);
+  const outerPath = rootPaths[0].path;
+
   const culledPaths = [];
-  culledPaths.push(...rootPaths[0].children.map(c => c.path));
-  culledPaths.push(rootPaths[0].path);
+  culledPaths.push(...optimizedInnerPaths);
+  culledPaths.push(outerPath);
 
   return culledPaths;
 }
