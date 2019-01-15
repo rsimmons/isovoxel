@@ -1,6 +1,8 @@
 const fs = require('fs');
 
-const EXPAND_RADIUS = 0.2;
+const {cutPathsToPonokoSVG} = require('isovoxel-ponoko-export');
+
+const EXPAND_RADIUS = 0.22;
 
 function vec2Add(a, b) {
   return {x: a.x + b.x, y: a.y + b.y};
@@ -258,3 +260,5 @@ const culledPaths = cullPaths(paths);
 console.log(`${culledPaths.length} paths after culling`);
 
 fs.writeFileSync('culled.svg', pathsToSVG(culledPaths));
+
+fs.writeFileSync('ponoko.svg', cutPathsToPonokoSVG(culledPaths, 'P2'));

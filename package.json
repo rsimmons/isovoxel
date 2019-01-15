@@ -3,6 +3,7 @@
   "workspaces": [
     "core",
     "sketches",
-    "thick-cut"
+    "thick-cut",
+    "ponoko-export"
   ]
 }
