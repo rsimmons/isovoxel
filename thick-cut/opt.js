@@ -1,3 +1,5 @@
+const {vec2Sub, vec2Norm, vec2Dot} = require('./vec');
+
 function sqrDistToClosestPointOnPath(v, path) {
   let bestSqrDist = Infinity;
   for (const p of path) {
@@ -66,6 +68,27 @@ function orderPathsForMinimumTravel(paths) {
   return resultPaths;
 }
 
+function simplifyPath(path) {
+  const newPath = [];
+
+  for (let i = 0; i < path.length; i++) {
+    const vPrev = path[(i-1+path.length)%path.length];
+    const vThis = path[i];
+    const vNext = path[(i+1)%path.length];
+
+    const normA = vec2Norm(vec2Sub(vThis, vPrev));
+    const normB = vec2Norm(vec2Sub(vNext, vThis));
+    const dot = vec2Dot(normA, normB);
+
+    if (dot < 0.999) {
+      newPath.push(vThis);
+    }
+  }
+
+  return newPath;
+}
+
 module.exports = {
   orderPathsForMinimumTravel,
+  simplifyPath,
 };
