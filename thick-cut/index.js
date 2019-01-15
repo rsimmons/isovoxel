@@ -261,4 +261,6 @@ console.log(`${culledPaths.length} paths after culling`);
 
 fs.writeFileSync('culled.svg', pathsToSVG(culledPaths));
 
-fs.writeFileSync('ponoko.svg', cutPathsToPonokoSVG(culledPaths, 'P2'));
+const {svg, mmPerInputUnit} = cutPathsToPonokoSVG(culledPaths, '24x12', true);
+console.log(`Ponoko strip width ${(2*EXPAND_RADIUS*mmPerInputUnit).toFixed(3)} mm`);
+fs.writeFileSync('ponoko.svg', svg);
