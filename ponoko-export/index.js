@@ -17,6 +17,13 @@ const sizeSpecs = {
     },
     mmPerUnit: 0.3527778,
   },
+  P3: {
+    bounds: {
+      min: {x: 15, y: 15},
+      max: {x: 2253, y: 1102},
+    },
+    mmPerUnit: 0.356,
+  },
 };
 
 function getPathsBounds(paths) {
