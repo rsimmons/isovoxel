@@ -12,6 +12,14 @@ function vec3Copy(v) {
 
 const VEC3_ZERO = vec3Create(0, 0, 0);
 
+function vec3Add(a, b) {
+  return {
+    x: a.x + b.x,
+    y: a.y + b.y,
+    z: a.z + b.z,
+  };
+}
+
 function vec3AddScalar(v, s) {
   return {
     x: v.x + s,
@@ -36,12 +44,22 @@ function vec3Max(a, b) {
   };
 }
 
+function vec3Scale(v, k) {
+  return {
+    x: k*v.x,
+    y: k*v.y,
+    z: k*v.z,
+  };
+}
+
 module.exports = {
   vec2Create,
   VEC3_ZERO,
   vec3Create,
   vec3Copy,
+  vec3Add,
   vec3AddScalar,
   vec3Min,
   vec3Max,
+  vec3Scale,
 };
