@@ -123,6 +123,9 @@ const ops = {
     }
   },
 
+  fillBox,
+  makeHollowShell,
+
   randomBox: (scene, val) => {
     fillBox(scene, randVec(scene), randVec(scene), val);
   },
@@ -162,9 +165,7 @@ const ops = {
     }
   },
 
-  worm: (scene, startVec, size, moveRepeat, kind) => {
-    worm(scene, startVec, size, moveRepeat, kind);
-  }
+  worm,
 };
 
 module.exports = {
