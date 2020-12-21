@@ -18,3 +18,21 @@ Animation done with [Vivus Instant](https://maxwellito.github.io/vivus-instant/)
 Voxels are addressed with integers x,y,z >= 0. By convention, I render the scene oriented so that the origin is the "bottommost" corner, x increases to the up-right, y increases to the up-left, and z increases vertically. To render the scene, each "on" voxel is projected to a set of 6 triangles (given our conventions, the projection is simply `tx = x - y, ty = -x - y - 2*z`, then add x {0,1} and y {0,1,2} to get all 6). For each triangle cell we store two values: depth and facing. Depth is the distance from the camera (computed as simply `x + y - z`). Facing is the apparent orientation of the face, either up, left or right. We fill the depth and facing values iff the depth is less than any depth currently stored in that triangle cell (typical depth buffering).
 
 After all voxels are projected, we iterate over all the edges of the triangle grid to decide if each one gets drawn or not. We decide this based on the depth and facing values of the two triangles adjacent to that edge. After the set of all drawn edges is determined, we sort and combine them to form contiguous segments wherever possible, and with alternating directionns for each "row" to be efficient for pen plotting.
+
+## Running the code
+
+*(The code is rather a mess currently, but here are some notes for the adventurous about running it.)*
+
+Assuming NodeJS and Yarn are installed:
+
+```
+$ git clone git@github.com:rsimmons/isovoxel.git
+$ cd isovoxel
+$ yarn
+[there are no external dependencies, but the code uses workspaces, so this makes the symlinks in node_modules/]
+$ cd sketches
+$ node sketch001.js
+[output written to out.svg, which you can open directly in a browser]
+```
+
+There are a number of demo "sketches", found in `sketches/sketchNNN.js`. The format should be relatively obvious, but a sketch is implemented as a call to `makeSketch` that provides a callback function to fill/define the voxels of the scene. The `padFrac` argument is the (fractional) padding around the edges of the render. The `ops` argument to the callback is an object with a handful of useful voxel operations (defined in `core/scene.js`, `const ops = {...`). Note that many of the ops have a random element; re-run the sketch to get a new variation.
