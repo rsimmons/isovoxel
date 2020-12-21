@@ -36,3 +36,18 @@ $ node sketch001.js
 ```
 
 There are a number of demo "sketches", found in `sketches/sketchNNN.js`. The format should be relatively obvious, but a sketch is implemented as a call to `makeSketch` that provides a callback function to fill/define the voxels of the scene. The `padFrac` argument is the (fractional) padding around the edges of the render. The `ops` argument to the callback is an object with a handful of useful voxel operations (defined in `core/scene.js`, `const ops = {...`). Note that many of the ops have a random element; re-run the sketch to get a new variation.
+
+To understand the available ops, it's useful to look at the demo sketches, but here is some brief documentation. Voxel coordinates arguments are given as plain old JS objects, like `{x: 1, y: 2, z: 3}`, with axes defined per the Math/Tech Notes section above. The `fill` argument of ops is to be 0 or 1, corresponding to empty or solid.
+
+* `fillBox(scene, corner_a, corner_b, fill)` - fills the 3d box defined by the two corners. it exclusive WRT to the "max" coordinates, so if corner_a==corner_b, no filling is done
+* `fillScene(scene)` - helper to fill the entire scene solid, so that you may then subtract away from it
+* `makeHollowShell(scene, cornerA, cornerB, thickness)` - makes a hollow shell of a box. as with `fillBox`, this excludes the "max" of coordinates. the thickness goes "inward", so the corners define the exterior
+* `randomBox(scene, fill)` - fills a box defined by random corners (uniform random in each dimension)
+* `toggleRandomBox(scene)` - like `randomBox`, but instead of filling, toggles voxels between empty and solid
+* `randomShell(scene, thickness)` - like `makeHollowShell` but with random corners like `randomBox`
+* `frontCutaway(scene, frac)` - "cut away" (fill with empty) the vertical front edge of the scene. `frac` is 0 to 1 of proportion to cut away
+* `topFrontCutaway(scene, frac)` - like `frontCutaway`, but cuts away the top-front corner
+* `predicateFill(scene, fill, predFunc)` - calls `predFunc` for every position in the scene, and iff it returns true, fills with the given fill value
+* `worm(scene, startPos, size, moveRepeat)` - fills a solid, square, random "worm" path, that starts from the given `startPos` and keeps going until it hits any side of the scene. `size` is basically the "diameter" of the worm. `moveRepeat` is how many steps it moves in a random (axis-aligned) direction before picking a new direction.
+
+
